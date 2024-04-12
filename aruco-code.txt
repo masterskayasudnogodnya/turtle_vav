@@ -1,0 +1,84 @@
+
+    1. Продемонстрировать установку на робота пакета патрулирования и пакет 
+экскурсовода. В случае, если во время подготовки к сдаче модуля конкурсант 
+уже выполнил установку данного пакета на робота, необходимо 
+продемонстрировать папку с установленным пакетом
+
+
+	cd ~/catkin_ws/src
+
+	git clone https://github.com/voltbro/turtlebro_patrol
+
+	cd ..
+
+	catkin_make --pkg turtlebro_patrol
+
+	cd src
+
+	git clone https://github.com/voltbro/turtlebro_excursions
+
+	cd ..
+
+	catkin_make --pkg turtlebro_excursions
+
+    2. Продемонстрировать изменение координат точек патрулирования в соответствии 
+с указаниями оценивающих экспертов
+
+	Ставим робота на точку старта, в терминале пк запускаем roscore
+
+rosservice call /reset
+
+	cd ~/catkin_ws/src/turtlebro_patrol/launch
+
+	roslaunch patrol_run.launch
+
+	Открываем новый терминал, подключаемся к роботу
+	Запускаем web интерфейс, проезжаем несколько раз по полигону, 
+останавливаясь и записывая значения X, Y и угла поворота (от двух точек)
+	Возвращаем робота на точку старта, останавливаем patrol_run через Ctrl+C
+
+rosservice call /reset
+
+	cd ~/catkin_ws/src/turtlebro_patrol/data
+
+	sudo nano goals.xml
+
+	Копируем строку, начинающуюся на <goal, вставляем её ниже. Одна строка - 
+одна точка для патрулирования. После х, у и theta вписываем координаты для 
+точек, которые записали ранее. После name пишем номера точек - 1, 2, 3 и т. д.
+Выходим из редактора через Ctrl+S, Ctrl+X
+
+    3. Продемонстрировать запуск пакета патрулирования
+cd ..
+
+	cd launch
+
+	roslaunch patrol.launch
+
+    4. Продемонстрировать работу патрулирования (не менее 2-х циклов), включая 
+выполнения задания
+
+        4.1. Начало патрулирования
+            Открываем новый терминал, подключаемся к роботу
+
+	rostopic pub /patrol(здесь можно нажать TAB, и подождать, пока команда заполнится)_control std(и здесь TAB)_msgs/String(и здесь) "data: ‘start'" (start в апострофах)
+	Вся команда:
+		rostopic pub /patrol_control std_msgs/String "data: ‘start'"
+
+        4.2. Пауза в патрулировании
+            rostopic pub /patrol_control std_msgs/String "data: ‘pause'"
+
+        4.3. Возобновление патрулирования
+            rostopic pub /patrol_control std_msgs/String "data: ‘resume'"
+
+        4.4. Остановку патрулирования и завершение работы пакета патрулирования
+            rostopic pub /patrol_control std_msgs/String "data: ‘shutdown'"
+
+    5. Продемонстрировать тестовую работу пакета экскурсовода
+
+        5.1. Продемонстрировать работу технологии text-to-speech. Используя консольные 
+команды необходимо произнести через колонки текст “Привет мир”
+
+	sudo apt install festvox-ru (если утилиты ещё нет. Для англ. языка en вместо ru)
+
+echo “Привет мир” | festival --tts --language russian
